@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Komo</title>
+  <link rel="stylesheet" href="/styles/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="#clock" class="brand" aria-label="Komo">Ko<span>mo</span></a>
+      <nav class="nav" aria-label="Modes">
+        <button type="button" class="nav-btn active" data-mode="clock">Clock</button>
+        <button type="button" class="nav-btn" data-mode="timer">Timer</button>
+        <button type="button" class="nav-btn" data-mode="pomodoro">Pomodoro</button>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <button type="button" id="historyBtn" class="icon-btn" title="History" aria-label="History">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5l3 2m6-3a9 9 0 1 1-2.64-6.36L21 8m0-4v4h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button type="button" id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7.4-3a7.4 7.4 0 0 0-.1-1.1l2-1.5-2-3.4-2.3.9a7.4 7.4 0 0 0-1.9-1.1L14.7 3h-5.4l-.4 2.8a7.4 7.4 0 0 0-1.9 1.1l-2.3-.9-2 3.4 2 1.5a7.4 7.4 0 0 0 0 2.2l-2 1.5 2 3.4 2.3-.9a7.4 7.4 0 0 0 1.9 1.1l.4 2.8h5.4l.4-2.8a7.4 7.4 0 0 0 1.9-1.1l2.3.9 2-3.4-2-1.5c.07-.36.1-.73.1-1.1Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </button>
+      <button type="button" id="fullscreenBtn" class="icon-btn" title="Fullscreen" aria-label="Fullscreen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div class="flip-clock" aria-live="polite">
+      <div class="flip-card"><span id="slotH">00</span></div>
+      <span class="colon">:</span>
+      <div class="flip-card"><span id="slotM">00</span></div>
+      <span class="colon">:</span>
+      <div class="flip-card"><span id="slotS">00</span></div>
+      <span id="ampmBadge" class="ampm hidden">AM</span>
+    </div>
+
+    <p id="stageSubtitle" class="stage-subtitle"></p>
+
+    <div id="stageControls" class="stage-controls hidden">
+      <button type="button" id="primaryActionBtn" class="btn">Start</button>
+      <button type="button" id="stopActionBtn" class="btn secondary hidden">Stop</button>
+    </div>
+
+    <section id="weatherPanel" class="weather-panel" aria-label="Weather">
+      <div class="weather-head">
+        <div>
+          <h2 id="wxLocation" class="wx-location">Detecting location...</h2>
+          <p id="wxMeta" class="wx-meta"></p>
+        </div>
+        <div class="wx-right">
+          <div class="city-wrap">
+            <input id="citySearch" type="text" placeholder="Change city..." autocomplete="off" aria-label="City" />
+            <ul id="cityList" class="city-list hidden"></ul>
+          </div>
+          <div class="unit-toggle">
+            <button type="button" class="unit-btn active" data-unit="C">&deg;C</button>
+            <button type="button" class="unit-btn" data-unit="F">&deg;F</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="weather-main">
+        <div>
+          <div id="wxTemp" class="wx-temp">--&deg;</div>
+          <div id="wxHiLo" class="wx-hilo"></div>
+          <div id="wxStats" class="wx-stats"></div>
+        </div>
+        <div class="wx-chart-wrap">
+          <svg id="wxChart" class="wx-chart" viewBox="0 0 420 96" preserveAspectRatio="none" aria-label="Hourly temperature"></svg>
+          <div id="wxHours" class="wx-hours"></div>
+        </div>
+      </div>
+
+      <p id="wxSource" class="wx-source"></p>
+    </section>
+  </main>
+
+  <div id="backdrop" class="backdrop hidden"></div>
+
+  <section id="timerModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Start Timer">
+    <h2>Start Timer</h2>
+    <form id="timerForm" class="modal-form">
+      <div class="field-row">
+        <label class="field"><span>Hours</span><input id="timerHours" type="number" min="0" max="23" placeholder="0" /></label>
+        <label class="field"><span>Minutes</span><input id="timerMinutes" type="number" min="0" max="59" placeholder="0" /></label>
+      </div>
+      <p id="timerError" class="form-error hidden"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn secondary" data-close>Cancel</button>
+        <button type="submit" class="btn">Start</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="pomoModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Start Pomodoro">
+    <h2>Start Pomodoro</h2>
+    <form id="pomoForm" class="modal-form">
+      <label class="field"><span>Task</span><input id="pomoTask" type="text" placeholder="What are you working on?" required /></label>
+      <div class="field-row">
+        <label class="field"><span>Focus (min)</span><input id="pomoFocus" type="number" min="1" max="240" placeholder="Minutes" required /></label>
+        <label class="field"><span>Break (optional)</span><input id="pomoBreak" type="number" min="0" max="60" placeholder="0" /></label>
+      </div>
+      <p id="pomoError" class="form-error hidden"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn secondary" data-close>Cancel</button>
+        <button type="submit" class="btn">Start</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="saveModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Save Session">
+    <h2>Finish Session</h2>
+    <form id="saveForm" class="modal-form">
+      <p id="saveSummary" class="save-summary"></p>
+      <label class="check-row"><input id="saveDone" type="checkbox" /><span>Mark as done</span></label>
+      <label class="field"><span>Note (optional)</span><textarea id="saveNote" rows="3" placeholder="Short note about this session..."></textarea></label>
+      <div class="modal-actions">
+        <button type="button" class="btn secondary" data-close>Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>
+  </section>
+
+  <aside id="settingsDrawer" class="drawer hidden" aria-label="Settings">
+    <div class="drawer-head">
+      <h2>Settings</h2>
+      <button type="button" class="close-x" data-close aria-label="Close">&times;</button>
+    </div>
+    <div class="drawer-body">
+      <div class="setting-group">
+        <p class="setting-label">Time format</p>
+        <div class="pill-row">
+          <button type="button" class="pill-btn" data-time-format="12">12 hour</button>
+          <button type="button" class="pill-btn" data-time-format="24">24 hour</button>
+        </div>
+      </div>
+      <div class="setting-group">
+        <label class="setting-label" for="dateFormatSelect">Date format</label>
+        <select id="dateFormatSelect">
+          <option value="long">FRI - NOV 20, 2026</option>
+          <option value="dayFirst">FRI 20 NOV 2026</option>
+          <option value="dmy">20/11/2026</option>
+          <option value="mdy">11/20/2026</option>
+          <option value="iso">2026-11-20</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <aside id="historyDrawer" class="drawer hidden" aria-label="History">
+    <div class="drawer-head">
+      <h2>History</h2>
+      <button type="button" class="close-x" data-close aria-label="Close">&times;</button>
+    </div>
+    <div class="drawer-body">
+      <input id="historySearch" type="search" placeholder="Search history..." aria-label="Search history" />
+      <div class="history-controls">
+        <div class="pill-row" id="historyFilterRow">
+          <button type="button" class="pill-btn active" data-filter="all">All</button>
+          <button type="button" class="pill-btn" data-filter="done">Done</button>
+          <button type="button" class="pill-btn" data-filter="incomplete">Not done</button>
+        </div>
+        <select id="historySort" class="compact" aria-label="Sort history">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="longest">Longest</option>
+        </select>
+      </div>
+      <ul id="historyList" class="history-list"></ul>
+    </div>
+  </aside>
+
+  <script src="/scripts/app.js"></script>
+</body>
+</html>
