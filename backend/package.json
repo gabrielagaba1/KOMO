@@ -1,0 +1,13 @@
+{
+  "name": "komo",
+  "version": "1.0.0",
+  "description": "Komo - Minimal Pomodoro workspace with clock, timer, and weather",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1"
+  }
+}
